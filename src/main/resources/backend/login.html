@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--    TODO 更新了新的版本号 依然没有解决axios.post不是方法的问题 等到 10.8 再做调试 -->
+
+    <script src="dependency/js/axios.js"></script>
+    <script src="dependency/js/vue2.js"></script>
+    <link rel="stylesheet" href="dependency/element-ui/lib/theme-chalk/index.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="dependency/element-ui/lib/index.js"></script>
+</head>
+<style>
+    .el-main {
+        background-color: #E9EEF3;
+        color: #333;
+        text-align: center;
+        line-height: 160px;
+        width: 50%;
+        margin:  auto;
+    }
+    .el-header, .el-footer {
+        background-color: #B3C0D1;
+        color: #333;
+        text-align: center;
+        line-height: 60px;
+    }
+
+</style>
+<body>
+
+<div id="app">
+
+    <el-container>
+        <el-header style="text-align: center;font-family: Helvetica Neue , Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, 微软雅黑, Arial, sans-serif;font-size: large;color: #409EFF">欢迎登入电动车管理系统</el-header>
+        <el-main >
+            <el-form ref="form" :model="userData" align="center" label-width="50px">
+            <el-form-item label="账号:" >
+                <el-input v-model="userData.username" style="width: 60%">
+                </el-input>
+            </el-form-item>
+                <el-form-item label="密码:">
+                    <el-input type="password" prefix-icon="el-icon-lock" v-model="userData.password" style="width: 60%" show-password>
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="success" @click="goRegister">注册</el-button>
+                    <el-button type="primary" @click="userLogin">登录</el-button>
+                </el-form-item>
+        </el-form>
+        </el-main>
+    </el-container>
+</div>
+<script>
+    new Vue({
+        el:"#app",
+        data(){
+            return{
+                userData:{
+                    username:"",
+                    password:""
+                }
+            }
+        },
+        methods: {
+            userLogin(){
+                var _this = this;
+                axios.post("/user/login",_this.userData).then(function (resp){
+                    if(resp.data.code!=0){
+                        window.location.href="index.html";
+                    }
+                    else {_this.$message.error("账号或密码错误");}
+                });
+            },
+            goRegister(){
+                window.location.href="register.html";
+            }
+        }
+    })
+</script>
+</body>
+</html>
