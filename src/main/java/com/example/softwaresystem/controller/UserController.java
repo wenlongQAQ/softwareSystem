@@ -41,21 +41,24 @@ public class UserController {
         return R.success(byId,"查询成功");
     }
     @PostMapping("/login")
-    public R<String> userLogin(HttpServletRequest request, @RequestBody User user){
+    public R<User> userLogin(HttpServletRequest request, @RequestBody User user){
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(User::getPassword,user.getPassword()).eq(User::getUsername,user.getUsername());
         User one = service.getOne(lambdaQueryWrapper);
         if (one!=null){
+            System.out.println(one.getIdentity());
             request.getSession().setAttribute("user",one.getIdentity());
-            return R.success(one,"登录成功");
+            return R.success(one.getIdentity(),"登录成功");
         }
 
         else
             return R.error("登录失败");
     }
-    @PostMapping
+    @PostMapping("/save")
     public R<String> addUser(@RequestBody User user){
         log.info(user.toString());
+        if (user.getUsername()==null)
+            user.setUsername(user.getIdNumber().substring(12));
         boolean save = service.save(user);
         if (save) {
             return R.success("","新增成功!");

@@ -12,7 +12,7 @@ public class ProjectInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestURI = request.getRequestURI();
-        if (requestURI.contains("login")||requestURI.contains("logon")) {
+        if (requestURI.contains("login")||requestURI.contains("register")||requestURI.contains("js")||requestURI.contains("element-ui")) {
             return true;
         }
         if (request.getSession().getAttribute("user")==null){

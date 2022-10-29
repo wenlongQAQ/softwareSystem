@@ -40,18 +40,20 @@
       right: 0px;
       top: 0px;
   }
+
 </style>
 <body>
 <div id="index">
     <el-container>
         <el-header>
             <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-                <el-menu-item index="1">处理中心</el-menu-item>
-                <el-menu-item index="2">处理中心</el-menu-item>
-                <el-menu-item index="3" disabled>消息中心</el-menu-item>
+                <el-menu-item index="1"><el-badge :value="12" class="item">
+                    处理中心
+                </el-badge></el-menu-item>
+                <el-menu-item index="2">用户中心</el-menu-item>
                 <el-menu-item index="4" >
                     <el-input
-                            placeholder="请输入内容"
+                            placeholder="请输入姓名"
                             v-model="searchForm.name">
                         <i slot="prefix" class="el-input__icon el-icon-search" @click="searchUser"></i>
                     </el-input>
@@ -246,10 +248,10 @@
                 },
                 rules: {
                     telephone: [
-                        { validator: checkTelephone,trigger: 'blur' }
+                        { validator: checkTelephone,required: true, message: '请输入手机号',trigger: 'blur' }
                     ],
                     idNumber: [
-                        {validator:checkIdNumber,trigger: 'blur'}
+                        {validator:checkIdNumber,required: true, message: '请输入身份证号',trigger: 'blur'}
                     ],
                     name:[
                         {required: true, message: '请输入名称', trigger: 'blur'}
@@ -349,7 +351,7 @@
                     console.log(valid);
                     if (valid===true) {
                         var _this = this;
-                        axios.post("/user",this.form).then(function (resp) {
+                        axios.post("/user/save",this.form).then(function (resp) {
                             if(resp.data.code===1){
                                 _this.$message.success(resp.data.msg);
                                 _this.showAll();
