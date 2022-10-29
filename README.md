@@ -1,4 +1,5 @@
-<a href="http://180.76.113.115:8082/backend/login.html">点我尝试一下</a>
+项目实际效果 - > <a href="http://180.76.113.115:8082/backend/login.html">点我尝试一下</a>
+管理员账户 账号 1 密码 1
 # softwareSystem 电动车牌照管理系统第七组
  
 ## 1. 电动车牌管理系统
