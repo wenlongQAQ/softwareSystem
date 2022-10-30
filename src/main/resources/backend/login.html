@@ -7,9 +7,12 @@
 
     <script src="dependency/js/axios.js"></script>
     <script src="dependency/js/vue2.js"></script>
-    <link rel="stylesheet" href="dependency/element-ui/lib/theme-chalk/index.css">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="dependency/element-ui/lib/index.js"></script>
+<!--    <script src="dependency/element-ui/lib/index.js"></script>-->
+<!--    <link rel="stylesheet" href="dependency/element-ui/lib/theme-chalk/index.css">-->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 </head>
 <style>
     .el-main {
@@ -59,16 +62,22 @@
             return{
                 userData:{
                     username:"",
-                    password:""
+                    password:"",
                 },
-                identity:''
+                identity:{
+                    identity:"" ,
+                    id:""
+                }
+
+
             }
         },
         methods: {
             userLogin(){
                 var _this = this;
                 axios.post("/user/login",_this.userData).then(function (resp){
-                    if(resp.data.code!==0&&resp.data.data===1){
+                    _this.identity = resp.data.data;
+                    if(resp.data.code!==0&&_this.identity.identity===1){
                         console.log(resp.data.data);
                         console.log(resp.data.code);
                         window.location.href="indexRoot.html";
@@ -76,6 +85,7 @@
                     else if(resp.data.code===0) {
                         _this.$message.error("账号或密码错误");
                     }else {
+                        window.sessionStorage.setItem('username',_this.identity.id);
                         window.location.href="indexUser.html";
                     }
 

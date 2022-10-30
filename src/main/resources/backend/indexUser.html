@@ -3,8 +3,449 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-</head>
-<body>
+    <script src="dependency/js/vue2.js"></script>
 
+    <script src="dependency/js/axios.js"></script>
+<!--    <script src="dependency/element-ui/lib/index.js"></script>-->
+<!--    <link rel="stylesheet" href="dependency/element-ui/lib/theme-chalk/index.css"></link>-->
+
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+<style>
+    .el-header, .el-footer {
+        color: #333;
+        text-align: center;
+        line-height: 30px;
+    }
+
+
+    .el-main {
+        color: #333;
+        /*text-align: center;*/
+        line-height: 10px;
+        height: 660px;
+    }
+
+    body > .el-container {
+        margin-bottom: 40px;
+    }
+
+    .el-container:nth-child(5) .el-aside,
+    .el-container:nth-child(6) .el-aside {
+        line-height: 260px;
+    }
+
+    .el-container:nth-child(7) .el-aside {
+        line-height: 320px;
+    }
+    .btn1{
+        position: absolute;
+        right: 0px;
+        top: 0px;
+    }
+
+</style>
+<body>
+<div id="index">
+    <el-container>
+        <el-header>
+            <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+                <el-menu-item index="1"><el-badge :value="12" class="item">
+                    我的车牌
+                </el-badge></el-menu-item>
+                <el-menu-item index="1" @click="dialogFormVisible = true" >申领车牌</el-menu-item>
+
+<!--                <el-menu-item index="4" >-->
+<!--                    <el-input-->
+<!--                            placeholder="请输入姓名"-->
+<!--                            v-model="searchForm.name">-->
+<!--                        <i slot="prefix" class="el-input__icon el-icon-search" @click="searchUser"></i>-->
+<!--                    </el-input>-->
+<!--                </el-menu-item>-->
+            </el-menu>
+        </el-header>
+        <el-container>
+            <el-main>
+<!--                <el-button type="primary" @click="dialogFormVisible = true"  class="btn1">新增</el-button>-->
+                <el-dialog title="户主信息" :visible.sync="dialogFormVisible">
+                    <el-form :model="form" :rules="rules" ref="form">
+                        <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
+                            <el-input v-model="form.name" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="地址" :label-width="formLabelWidth" prop="address">
+                            <el-input v-model="form.address" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="手机号" :label-width="formLabelWidth" prop="telephone">
+                            <el-input v-model.number="form.telephone" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="身份证号" :label-width="formLabelWidth" prop="idNumber">
+                            <el-input v-model="form.idNumber" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="电动车牌号" :label-width="formLabelWidth" prop="tag">
+                            <el-input v-model="form.tag" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="性别" :label-width="formLabelWidth" prop="sex">
+                            <el-select v-model="form.sex" placeholder="性别">
+                                <el-option label="男" value="1"></el-option>
+                                <el-option label="女" value="0"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="HandlerUserData('form')">提交</el-button>
+                            <el-button type="info" @click="HandlerCancel">取 消</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-dialog>
+
+
+                <!--                修改用户的表单-->
+                <el-dialog title="用户修改" :visible.sync="dialogUpdateVisible">
+                    <el-form :model="updateForm" :rules="rules" ref="updateForm">
+                        <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
+                            <el-input v-model="updateForm.name" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="地址" :label-width="formLabelWidth" prop="address">
+                            <el-input v-model="updateForm.address" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="手机号" :label-width="formLabelWidth" prop="telephone">
+                            <el-input v-model.number="updateForm.telephone" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="身份证号" :label-width="formLabelWidth" prop="idNumber">
+                            <el-input v-model="updateForm.idNumber" autocomplete="off"></el-input>
+                        </el-form-item>
+<!--                        <el-form-item label="电动车牌号" :label-width="formLabelWidth" prop="tag">-->
+<!--                            <el-input v-model="updateForm.tag" autocomplete="off"></el-input>-->
+<!--                        </el-form-item>-->
+                        <el-form-item label="性别" :label-width="formLabelWidth" prop="sex">
+                            <el-select v-model="updateForm.sex" placeholder="性别">
+                                <el-option label="男" value="1"></el-option>
+                                <el-option label="女" value="0"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="updateUserData('updateForm')">提交</el-button>
+                            <el-button type="info" @click="updateCancel">取 消</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-dialog>
+
+
+                <template>
+                    <el-descriptions  :data="tableData" class="margin-top" title="个人信息" :column="3" :size="size" border>
+                        <template slot="extra">
+                            <el-button type="primary" size="small" @click="handleEdit()">操作</el-button>
+                        </template>
+                        <el-descriptions-item>
+                            <template slot="label">
+                                <i class="el-icon-user"></i>
+                                用户名
+                            </template>
+                            {{tableData.name}}
+                        </el-descriptions-item>
+                        <el-descriptions-item>
+                            <template slot="label">
+                                <i class="el-icon-mobile-phone"></i>
+                                手机号
+                            </template>
+                            {{tableData.telephone}}
+                        </el-descriptions-item>
+                        <el-descriptions-item>
+                            <template slot="label">
+                                <i class="el-icon-location-outline"></i>
+                                居住地
+                            </template>
+                            {{tableData.address}}
+                        </el-descriptions-item>
+                        <el-descriptions-item>
+                            <template slot="label">
+                                <i class="el-icon-tickets"></i>
+                                车牌
+                            </template>
+                            <el-tag size="small">{{tableData.tag}}</el-tag>
+                        </el-descriptions-item>
+                        <el-descriptions-item>
+                            <template slot="label">
+                                <i class="el-icon-s-check"></i>
+                                性别
+                            </template>
+                            {{String(tableData.address)==='0'?"女":"男"}}
+                        </el-descriptions-item>
+                    </el-descriptions>
+                    <el-descriptions-item>
+                            <template slot="label">
+                                <i class="el-icon-s-check"></i>
+                                身份证号
+                            </template>
+                        {{tableData.idNumber}}
+                        </el-descriptions-item>
+                    </el-descriptions>
+                </template>
+
+
+                <!--                用户信息展示表格-->
+
+<!--                <template>-->
+<!--                    <el-table-->
+<!--                            :data="tableData"-->
+<!--                            height="660px"-->
+<!--                            border-->
+<!--                            style="width: 100%">-->
+<!--                        <el-table-column-->
+<!--                                prop="name"-->
+<!--                                label="姓名"-->
+<!--                                width="180">-->
+<!--                        </el-table-column>-->
+<!--                        <el-table-column-->
+<!--                                label="性别"-->
+<!--                                width="180"-->
+<!--                        >-->
+<!--                            <template slot-scope="scope">-->
+<!--                                {{ String(scope.row.sex) === '0' ? '女' : '男' }}-->
+<!--                            </template>-->
+<!--                        </el-table-column>-->
+<!--                        <el-table-column-->
+<!--                                prop="address"-->
+<!--                                label="地址">-->
+<!--                        </el-table-column>-->
+<!--                        <el-table-column-->
+<!--                                prop="telephone"-->
+<!--                                label="电话号">-->
+<!--                        </el-table-column>-->
+<!--                        <el-table-column-->
+<!--                                prop="idNumber"-->
+<!--                                label="身份证号">-->
+<!--                        </el-table-column>-->
+<!--                        <el-table-column-->
+<!--                                prop="tag"-->
+<!--                                label="车牌号">-->
+<!--                        </el-table-column>-->
+<!--                        <el-table-column label="操作">-->
+<!--                            <template slot-scope="scope">-->
+<!--                                <el-button-->
+<!--                                        size="mini"-->
+<!--                                        @click="handleEdit(scope.row.id)">编辑</el-button>-->
+<!--                                <el-button-->
+<!--                                        size="mini"-->
+<!--                                        type="danger"-->
+<!--                                        @click="handlerDelete(scope.row.id)">删除</el-button>-->
+<!--                            </template>-->
+
+<!--                        </el-table-column>-->
+<!--                    </el-table>-->
+<!--                </template>-->
+
+            </el-main>
+        </el-container>
+    </el-container>
+</div>
+
+<script>
+    new Vue({
+        el:"#index",
+        data(){
+            var checkTelephone = (rule, value, cb) => {
+
+                // 验证手机号的正则表达式
+                const regMobile = /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
+                if (regMobile.test(value)) {
+                    cb();
+                }
+                cb(new Error("请输入合法的手机号"));
+
+            };
+            var checkIdNumber = (rule, value, callback) => {
+                if (!value) {
+                    callback(new Error("身份证号不能为空"));
+                }
+                if (!/(^\d{15}$)|(^\d{17}(\d|X|x)$)/.test(value)) {
+                    callback(new Error("你输入的身份证长度或格式错误"));
+                }
+                // 身份证号码校验
+                // var sum = 0,
+                //     weights = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2],
+                //     codes = "10X98765432";
+                // for (var i = 0; i < value.length - 1; i++) {
+                //     sum += value[i] * weights[i];
+                // }
+                // var last = codes[sum % 11]; //计算出来的最后一位身份证号码
+                // if (value[value.length - 1] != last) {
+                //     callback(new Error("你输入的身份证号非法"));
+                // }
+                callback();
+            };
+            return{
+                size: '',
+                activeIndex: '1',
+                activeName: 'second',
+                input: '',
+                counts: 0,
+                tableData : [],
+                dialogFormVisible: false,
+                dialogUpdateVisible:false,
+                updateForm:{
+                    name: '',
+                    address:'',
+                    telephone:'',
+                    idNumber:'',
+                    sex:'',
+                    id:""
+                },
+                form: {
+                    name: '',
+                    address:'',
+                    telephone:'',
+                    idNumber:'',
+                    tag:"",
+                    sex:'',
+                    id:""
+                },
+                searchForm:{
+                    name:'',
+                    idNumber:''
+                },
+                rules: {
+                    telephone: [
+                        { validator: checkTelephone,required: true, message: '请输入手机号',trigger: 'blur' }
+                    ],
+                    idNumber: [
+                        {validator:checkIdNumber,required: true, message: '请输入身份证号',trigger: 'blur'}
+                    ],
+                    name:[
+                        {required: true, message: '请输入名称', trigger: 'blur'}
+                    ],
+                    sex:[
+                        {required: true, message: '请选择性别', trigger: 'blur'}
+                    ],
+                    address:[
+                        {required: true, message: '请输入住址', trigger: 'blur'}
+                    ]
+                },
+                formLabelWidth: '120px'
+            };
+
+        },
+        methods: {
+            handleSelect(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            searchUser() {
+                console.log(this.searchForm.name);
+                var _this  =this;
+                axios.get("/user/search?name="+this.searchForm.name).then(function (resp) {
+                    if(resp.data.code===1){
+                        _this.$message.success(resp.data.msg);
+                        _this.tableData = resp.data.data;
+                    }else {
+                        _this.$message.error(resp.data.msg);
+                    }
+
+
+                })
+            },
+            handlerDelete(id){
+                var _this = this;
+                this.$confirm('确定删除吗', '删除?', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        axios.delete("/user/delete?id="+id).then(function (resp) {
+                            if (resp.data.code===1)
+                                _this.$message.success(resp.data.msg);
+                            else
+                                _this.$message.error(resp.data.msg)
+                        })
+                    }
+                });
+            },
+            handleEdit(){
+                var id = window.sessionStorage.getItem('username');
+                this.dialogUpdateVisible=true;
+                var _this = this;
+                axios.get("/user/"+id).then(function (resp) {
+                    _this.updateForm = resp.data.data;
+                    if(resp.data.code===1)
+                        _this.$message.success(resp.data.msg);
+                    else
+                        _this.$message.error(resp.data.msg);
+                })
+            },
+            updateCancel(){
+                for(let i in this.updateForm){
+                    this.updateForm[i] = "";
+                }
+                this.dialogUpdateVisible=false;
+            },
+            updateUserData(formName){
+                this.$refs[formName].validate((valid) => {
+                    console.log(valid);
+                    if (valid===true) {
+                        var _this = this;
+                        axios.put("/user",this.updateForm).then(function (resp) {
+                            if(resp.data.code===1){
+                                _this.$message.success(resp.data.msg);
+                                _this.showAll();
+                            }
+                            else
+                                _this.$message.error(resp.data.msg);
+                        })
+                        for(let i in this.form){
+                            this.form[i] = "";
+                        }
+                        this.dialogUpdateVisible=false;
+                    } else {
+                        this.$message.error("你以为乱输我就让你交?");
+                        return false;
+                    }
+                });
+
+            },
+            showAll(){
+                var _this = this;
+                var username = window.sessionStorage.getItem('username');
+                axios.get("/user/"+username).then(function (resp){
+                    _this.tableData = resp.data.data;
+                })
+                console.log(this.tableData.name);
+
+            },
+            HandlerUserData(formName){
+                this.$refs[formName].validate((valid) => {
+                    console.log(valid);
+                    if (valid===true) {
+                        var _this = this;
+                        axios.post("/user/save",this.form).then(function (resp) {
+                            if(resp.data.code===1){
+                                _this.$message.success(resp.data.msg);
+                                _this.showAll();
+                            }
+                            else
+                                _this.$message.error(resp.data.msg);
+                        })
+                        for(let i in this.form){
+                            this.form[i] = "";
+                        }
+                        this.dialogFormVisible=false;
+                    } else {
+                        this.$message.error("你以为乱输我就让你交?")
+                        return false;
+                    }
+                });
+
+            },
+            HandlerCancel(){
+
+                this.dialogFormVisible=false;
+
+            }
+        },
+        mounted() {
+            for(let i in this.form){
+                this.form[i] = "";
+            }
+            this.showAll();
+        }
+    })
+
+</script>
 </body>
 </html>

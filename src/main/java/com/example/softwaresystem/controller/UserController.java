@@ -29,14 +29,14 @@ public class UserController {
         else return R.error("出错了");
     }
     @GetMapping
-    public R selectAll(){
+    public R<List<User>> selectAll(){
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(User::getIdentity,0);
         List<User> list = service.list(lambdaQueryWrapper);
         return R.success(list,"查询成功");
     }
     @GetMapping("/{id}")
-    public R selectAll(@PathVariable Integer id){
+    public R<User> selectAll(@PathVariable Integer id){
         User byId = service.getById(id);
         return R.success(byId,"查询成功");
     }
@@ -48,9 +48,8 @@ public class UserController {
         if (one!=null){
             System.out.println(one.getIdentity());
             request.getSession().setAttribute("user",one.getIdentity());
-            return R.success(one.getIdentity(),"登录成功");
+            return R.success(one,"登录成功");
         }
-
         else
             return R.error("登录失败");
     }
