@@ -54,7 +54,8 @@
                 <el-menu-item index="1"><el-badge :value="12" class="item">
                     我的车牌
                 </el-badge></el-menu-item>
-                <el-menu-item index="1" @click="dialogFormVisible = true" >申领车牌</el-menu-item>
+                <el-menu-item @click="showDialogFormVisible" >申领车牌</el-menu-item>
+                <el-menu-item><i class="el-icon-switch-button" @click="logonOut"></i></el-menu-item>
 
 <!--                <el-menu-item index="4" >-->
 <!--                    <el-input-->
@@ -71,28 +72,28 @@
                 <el-dialog title="户主信息" :visible.sync="dialogFormVisible">
                     <el-form :model="form" :rules="rules" ref="form">
                         <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
-                            <el-input v-model="form.name" autocomplete="off"></el-input>
+                            <el-input disabled="true" v-model="form.name" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="地址" :label-width="formLabelWidth" prop="address">
-                            <el-input v-model="form.address" autocomplete="off"></el-input>
+                            <el-input disabled="true" v-model="form.address" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="手机号" :label-width="formLabelWidth" prop="telephone">
-                            <el-input v-model.number="form.telephone" autocomplete="off"></el-input>
+                            <el-input disabled="true" v-model.number="form.telephone" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="身份证号" :label-width="formLabelWidth" prop="idNumber">
-                            <el-input v-model="form.idNumber" autocomplete="off"></el-input>
+                            <el-input disabled="true" v-model="form.idNumber" autocomplete="off"></el-input>
                         </el-form-item>
-                        <el-form-item label="电动车牌号" :label-width="formLabelWidth" prop="tag">
-                            <el-input v-model="form.tag" autocomplete="off"></el-input>
-                        </el-form-item>
+<!--                        <el-form-item label="电动车牌号" :label-width="formLabelWidth" prop="tag">-->
+<!--                            <el-input  v-model="form.tag" autocomplete="off"></el-input>-->
+<!--                        </el-form-item>-->
                         <el-form-item label="性别" :label-width="formLabelWidth" prop="sex">
-                            <el-select v-model="form.sex" placeholder="性别">
+                            <el-select disabled="true" v-model="form.sex" placeholder="性别">
                                 <el-option label="男" value="1"></el-option>
                                 <el-option label="女" value="0"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item>
-                            <el-button type="primary" @click="HandlerUserData('form')">提交</el-button>
+                            <el-button type="primary" @click="HandlerUserData('form')">提交申请</el-button>
                             <el-button type="info" @click="HandlerCancel">取 消</el-button>
                         </el-form-item>
                     </el-form>
@@ -134,7 +135,7 @@
                 <template>
                     <el-descriptions  :data="tableData" class="margin-top" title="个人信息" :column="3" :size="size" border>
                         <template slot="extra">
-                            <el-button type="primary" size="small" @click="handleEdit()">操作</el-button>
+                            <el-button type="primary" size="small" @click="handleEdit()">修改</el-button>
                         </template>
                         <el-descriptions-item>
                             <template slot="label">
@@ -171,15 +172,22 @@
                             </template>
                             {{String(tableData.address)==='0'?"女":"男"}}
                         </el-descriptions-item>
-                    </el-descriptions>
-                    <el-descriptions-item>
+                        <el-descriptions-item>
                             <template slot="label">
                                 <i class="el-icon-s-check"></i>
                                 身份证号
                             </template>
-                        {{tableData.idNumber}}
+                            {{tableData.idNumber}}
+                        </el-descriptions-item>
+                        <el-descriptions-item>
+                            <template slot="label">
+                                <i class="el-icon-s-check"></i>
+                                请求状态
+                            </template>
+                            {{String(tableData.status)==='2'?"你的申请已被驳回":"处理中或者未申请"}}
                         </el-descriptions-item>
                     </el-descriptions>
+
                 </template>
 
 
@@ -306,10 +314,10 @@
                 },
                 rules: {
                     telephone: [
-                        { validator: checkTelephone,required: true, message: '请输入手机号',trigger: 'blur' }
+                        { validator: checkTelephone,required: true, message: '请输入合法的手机号',trigger: 'blur' }
                     ],
                     idNumber: [
-                        {validator:checkIdNumber,required: true, message: '请输入身份证号',trigger: 'blur'}
+                        {validator:checkIdNumber,required: true, message: '你输入的身份证长度或格式错误',trigger: 'blur'}
                     ],
                     name:[
                         {required: true, message: '请输入名称', trigger: 'blur'}
@@ -319,44 +327,67 @@
                     ],
                     address:[
                         {required: true, message: '请输入住址', trigger: 'blur'}
-                    ]
+                    ],
                 },
                 formLabelWidth: '120px'
             };
 
         },
         methods: {
+            logonOut(){
+                var _this = this ;
+                axios.delete("/user").then(function (resp) {
+                    if (resp.data.code===1) {
+                        _this.$message.success(resp.data.msg);
+                        window.location.href="login.html";
+                    }
+                    else
+                        _this.$message.error(resp.data.msg);
+                })
+            },
             handleSelect(key, keyPath) {
                 console.log(key, keyPath);
             },
-            searchUser() {
-                console.log(this.searchForm.name);
-                var _this  =this;
-                axios.get("/user/search?name="+this.searchForm.name).then(function (resp) {
-                    if(resp.data.code===1){
-                        _this.$message.success(resp.data.msg);
-                        _this.tableData = resp.data.data;
-                    }else {
-                        _this.$message.error(resp.data.msg);
-                    }
+            // searchUser() {
+            //     console.log(this.searchForm.name);
+            //     var _this  =this;
+            //     axios.get("/user/search?name="+this.searchForm.name).then(function (resp) {
+            //         if(resp.data.code===1){
+            //             _this.$message.success(resp.data.msg);
+            //             _this.tableData = resp.data.data;
+            //         }else {
+            //             _this.$message.error(resp.data.msg);
+            //         }
+            //
+            //
+            //     })
+            // },
+            showDialogFormVisible(){
 
 
-                })
+                if(this.form.name===""||this.form.address===""||this.form.idNumber===""){
+                    this.$message.error("请补全你的个人信息,身份证,姓名,和住址后再尝试");
+                }else {
+                    if (this.form.tag == null)
+                        this.dialogFormVisible = true;
+                    else
+                        this.$message.error("已有车牌不可重复申领");
+                }
             },
-            handlerDelete(id){
-                var _this = this;
-                this.$confirm('确定删除吗', '删除?', {
-                    confirmButtonText: '确定',
-                    callback: action => {
-                        axios.delete("/user/delete?id="+id).then(function (resp) {
-                            if (resp.data.code===1)
-                                _this.$message.success(resp.data.msg);
-                            else
-                                _this.$message.error(resp.data.msg)
-                        })
-                    }
-                });
-            },
+            // handlerDelete(id){
+            //     var _this = this;
+            //     this.$confirm('确定删除吗', '删除?', {
+            //         confirmButtonText: '确定',
+            //         callback: action => {
+            //             axios.delete("/user/delete?id="+id).then(function (resp) {
+            //                 if (resp.data.code===1)
+            //                     _this.$message.success(resp.data.msg);
+            //                 else
+            //                     _this.$message.error(resp.data.msg)
+            //             })
+            //         }
+            //     });
+            // },
             handleEdit(){
                 var id = window.sessionStorage.getItem('username');
                 this.dialogUpdateVisible=true;
@@ -404,6 +435,7 @@
                 var username = window.sessionStorage.getItem('username');
                 axios.get("/user/"+username).then(function (resp){
                     _this.tableData = resp.data.data;
+                    _this.form = resp.data.data;
                 })
                 console.log(this.tableData.name);
 
@@ -413,7 +445,7 @@
                     console.log(valid);
                     if (valid===true) {
                         var _this = this;
-                        axios.post("/user/save",this.form).then(function (resp) {
+                        axios.post("/user/request",this.form).then(function (resp) {
                             if(resp.data.code===1){
                                 _this.$message.success(resp.data.msg);
                                 _this.showAll();
@@ -433,7 +465,6 @@
 
             },
             HandlerCancel(){
-
                 this.dialogFormVisible=false;
 
             }

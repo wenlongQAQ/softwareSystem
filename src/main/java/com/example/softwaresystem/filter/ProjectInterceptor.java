@@ -18,7 +18,6 @@ public class ProjectInterceptor implements HandlerInterceptor {
         if (request.getSession().getAttribute("user")==null){
             response.sendRedirect("/backend/login.html");
         }
-
         return true;
     }
 

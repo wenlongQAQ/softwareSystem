@@ -26,8 +26,10 @@ public class GlobalExceptionHandler {
             String msg="";
             if (s[5].equals("tbl_user.tbl_user_number")) {
                 msg +="啊?身份证号为"+ s[2] + "的人已存在!";
-            }else {
+            }else if(s[5].equals("tbl_user.tbl_user_name")){
                 msg += "啊?账号" + s[2] + "已存在!";
+            }else if(s[5].equals("tbl_user.tbl_user_tag")){
+                msg += "啊?车牌" + s[2] + "已存在!";
             }
 
             return R.error(msg);

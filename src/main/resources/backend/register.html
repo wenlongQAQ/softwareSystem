@@ -84,7 +84,7 @@
         if (pattern.test(value)) {
           cb();
         }
-        cb(new Error("账号应该为5-11位 以1-9开头的纯数字"));
+        cb(new Error("账号应该为6-11位 以1-9开头的纯数字"));
       };
       var checkPassword = (rule, value, cb) =>{
         var checkPassword = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/;

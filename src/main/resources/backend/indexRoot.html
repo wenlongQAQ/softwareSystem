@@ -51,9 +51,10 @@
         <el-header>
             <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
                 <el-menu-item index="1"><el-badge :value="12" class="item">
-                    处理中心
-                </el-badge></el-menu-item>
-                <el-menu-item index="2">用户中心</el-menu-item>
+                    <a href="solution.html" target="_self">处理中心</a>
+                </el-badge>
+                </el-menu-item>
+                <el-menu-item index="2"><a href="indexRoot.html" target="_self">用户管理</a></el-menu-item>
                 <el-menu-item index="4" >
                     <el-input
                             placeholder="请输入姓名"
@@ -61,13 +62,14 @@
                         <i slot="prefix" class="el-input__icon el-icon-search" @click="searchUser"></i>
                     </el-input>
                 </el-menu-item>
+                <el-menu-item><i class="el-icon-switch-button" @click="logonOut"></i></el-menu-item>
             </el-menu>
         </el-header>
 
         <el-container>
             <el-main>
                 <el-button type="primary" @click="dialogFormVisible = true"  class="btn1">新增</el-button>
-                <el-dialog title="户主信息" :visible.sync="dialogFormVisible">
+                <el-dialog title="户主信息(身份证后六位将作为用户的账号)" :visible.sync="dialogFormVisible">
                     <el-form :model="form" :rules="rules" ref="form">
                         <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
                             <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -199,6 +201,15 @@
                 cb(new Error("请输入合法的手机号"));
 
             };
+            var checkTag= (rule, value, cb) => {
+
+                // 验证手机号的正则表达式
+                const regMobile = /^\d{6}$/;
+                if (regMobile.test(value)) {
+                    cb();
+                }
+                cb(new Error("请输入车牌号 6位的纯数字"));
+            };
             var checkIdNumber = (rule, value, callback) => {
                 if (!value) {
                     callback(new Error("身份证号不能为空"));
@@ -220,7 +231,7 @@
                 callback();
             };
             return{
-                activeIndex: '1',
+                activeIndex: '2',
                 activeName: 'second',
                 input: '',
                 counts: 0,
@@ -251,10 +262,10 @@
                 },
                 rules: {
                     telephone: [
-                        { validator: checkTelephone,required: true, message: '请输入手机号',trigger: 'blur' }
+                        { validator: checkTelephone,required: true, message: '请输入合法的手机号',trigger: 'blur' }
                     ],
                     idNumber: [
-                        {validator:checkIdNumber,required: true, message: '请输入身份证号',trigger: 'blur'}
+                        {validator:checkIdNumber,required: true, message: '你输入的身份证长度或格式错误',trigger: 'blur'}
                     ],
                     name:[
                         {required: true, message: '请输入名称', trigger: 'blur'}
@@ -264,6 +275,9 @@
                     ],
                     address:[
                         {required: true, message: '请输入住址', trigger: 'blur'}
+                    ],
+                    tag:[
+                        {validator:checkTag,required: true, message: '车牌号需要为六位纯数字',trigger: 'blur'}
                     ]
                 },
                 formLabelWidth: '120px'
@@ -271,6 +285,18 @@
 
         },
         methods: {
+            logonOut(){
+                var _this = this ;
+                axios.delete("/user").then(function (resp) {
+                    if (resp.data.code===1) {
+                        _this.$message.success(resp.data.msg);
+                        window.location.href="login.html";
+                    }
+                    else
+                        _this.$message.error(resp.data.msg);
+
+                })
+            },
             handleSelect(key, keyPath) {
                 console.log(key, keyPath);
             },
@@ -294,8 +320,10 @@
                     confirmButtonText: '确定',
                     callback: action => {
                         axios.delete("/user/delete?id="+id).then(function (resp) {
-                            if (resp.data.code===1)
+                            if (resp.data.code===1) {
+                                _this.showAll();
                                 _this.$message.success(resp.data.msg);
+                            }
                             else
                                 _this.$message.error(resp.data.msg)
                         })
@@ -374,9 +402,10 @@
 
             },
             HandlerCancel(){
-
+                for(let i in this.form){
+                    this.form[i] = "";
+                }
                 this.dialogFormVisible=false;
-
             }
         },
         mounted() {
