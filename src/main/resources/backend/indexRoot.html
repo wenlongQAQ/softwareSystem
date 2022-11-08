@@ -50,7 +50,7 @@
     <el-container>
         <el-header>
             <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-                <el-menu-item index="1"><el-badge :value="12" class="item">
+                <el-menu-item index="1"><el-badge :value="solution" class="item">
                     <a href="solution.html" target="_self">处理中心</a>
                 </el-badge>
                 </el-menu-item>
@@ -235,6 +235,7 @@
                 activeName: 'second',
                 input: '',
                 counts: 0,
+                solution: 5,
                 tableData : [],
                 dialogFormVisible: false,
                 dialogUpdateVisible:false,
@@ -375,6 +376,9 @@
                     var _this = this;
                 axios.get("/user").then(function (resp){
                     _this.tableData = resp.data.data;
+                })
+                axios.get("/user/solution").then(function (resp) {
+                    _this.solution = resp.data.data;
                 })
             },
             HandlerUserData(formName){
