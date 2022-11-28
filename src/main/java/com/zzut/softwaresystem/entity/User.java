@@ -1,10 +1,15 @@
-package com.example.softwaresystem.entity;
+package com.zzut.softwaresystem.entity;
+
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
 @Data
+@NoArgsConstructor
+@Component
 public class User implements Serializable {
     private Long id;
     private String username;

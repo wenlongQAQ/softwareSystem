@@ -1,7 +1,7 @@
-package com.example.softwaresystem.mapper;
+package com.zzut.softwaresystem.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.softwaresystem.entity.User;
+import com.zzut.softwaresystem.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

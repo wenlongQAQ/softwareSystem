@@ -7,8 +7,8 @@
   <script src="dependency/js/axios.js"></script>
   <!--    <link rel="stylesheet" href="dependency/element-ui/lib/theme-chalk/index.css"></link>  -->
   <!--    <script src="dependency/element-ui/lib/index.js"></script>-->
-  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <link rel="stylesheet" href="./dependency/element-ui/lib/theme-chalk/index.css">
+  <script src="./dependency/element-ui/lib/index.js"></script>
 
 </head>
 <style>
@@ -52,16 +52,20 @@
       <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
         <el-menu-item index="1">
           <a href="solution.html" target="_self">处理中心</a>
+
         </el-menu-item>
         <el-menu-item index="2"><a href="indexRoot.html" target="_self">用户管理</a></el-menu-item>
         <el-menu-item index="4" >
           <el-input
                   placeholder="请输入姓名"
                   v-model="searchForm.name">
-            <i slot="prefix" class="el-input__icon el-icon-search" @click="searchUser"></i>
+            <i slot="prefix" class="el-icon-search" @click="searchUser"></i>
           </el-input>
+<!--          el-input__icon -->
         </el-menu-item>
-        <el-menu-item><i class="el-icon-switch-button" @click="logonOut"></i></el-menu-item>
+        <el-menu-item>
+          <i class="el-icon-switch-button" @click="logonOut"></i>
+        </el-menu-item>
 
       </el-menu>
 
@@ -70,35 +74,37 @@
     <el-container>
       <el-main>
 <!--        <el-button type="primary" @click="dialogFormVisible = true"  class="btn1">新增</el-button>-->
-        <el-dialog title="户主信息(身份证后六位将作为用户的账号)" :visible.sync="dialogFormVisible">
-          <el-form :model="form" :rules="rules" ref="form">
-            <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">
-              <el-input v-model="form.name" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="地址" :label-width="formLabelWidth" prop="address">
-              <el-input v-model="form.address" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="手机号" :label-width="formLabelWidth" prop="telephone">
-              <el-input v-model.number="form.telephone" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="身份证号" :label-width="formLabelWidth" prop="idNumber">
-              <el-input v-model="form.idNumber" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="电动车牌号" :label-width="formLabelWidth" prop="tag">
-              <el-input v-model="form.tag" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="性别" :label-width="formLabelWidth" prop="sex">
-              <el-select v-model="form.sex" placeholder="性别">
-                <el-option label="男" value="1"></el-option>
-                <el-option label="女" value="0"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="HandlerUserData('form')">提交</el-button>
-              <el-button type="info" @click="HandlerCancel">取 消</el-button>
-            </el-form-item>
-          </el-form>
-        </el-dialog>
+<!--        <el-dialog title="户主信息(身份证后六位将作为用户的账号)" :visible.sync="dialogFormVisible">-->
+<!--          <el-form :model="form" :rules="rules" ref="form">-->
+<!--            <el-form-item label="姓名" :label-width="formLabelWidth" prop="name">-->
+<!--              <el-input v-model="form.name" autocomplete="off"></el-input>-->
+<!--            </el-form-item>-->
+<!--            <el-form-item label="地址" :label-width="formLabelWidth" prop="address">-->
+<!--              <el-input v-model="form.address" autocomplete="off"></el-input>-->
+<!--            </el-form-item>-->
+<!--            <el-form-item label="手机号" :label-width="formLabelWidth" prop="telephone">-->
+<!--              <el-input v-model.number="form.telephone" autocomplete="off"></el-input>-->
+<!--            </el-form-item>-->
+<!--            <el-form-item label="身份证号" :label-width="formLabelWidth" prop="idNumber">-->
+<!--              <el-input v-model="form.idNumber" autocomplete="off"></el-input>-->
+<!--            </el-form-item>-->
+<!--            <el-form-item label="电动车牌号" :label-width="formLabelWidth" prop="tag">-->
+<!--              <el-input v-model="form.tag" autocomplete="off">-->
+<!--                <i slot="prefix" class="el-icon-refresh-right" @click="randomTag"></i>-->
+<!--              </el-input>-->
+<!--            </el-form-item>-->
+<!--            <el-form-item label="性别" :label-width="formLabelWidth" prop="sex">-->
+<!--              <el-select v-model="form.sex" placeholder="性别">-->
+<!--                <el-option label="男" value="1"></el-option>-->
+<!--                <el-option label="女" value="0"></el-option>-->
+<!--              </el-select>-->
+<!--            </el-form-item>-->
+<!--            <el-form-item>-->
+<!--              <el-button type="primary" @click="HandlerUserData('form')">提交</el-button>-->
+<!--              <el-button type="info" @click="HandlerCancel">取 消</el-button>-->
+<!--            </el-form-item>-->
+<!--          </el-form>-->
+<!--        </el-dialog>-->
 
 
         <!--                修改用户的表单-->
@@ -117,7 +123,10 @@
               <el-input v-model="updateForm.idNumber" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="电动车牌号" :label-width="formLabelWidth" prop="tag">
-              <el-input v-model="updateForm.tag" autocomplete="off"></el-input>
+              <el-input v-model="updateForm.tag" autocomplete="off" disabled="true">
+                点击左侧按钮生成随机车牌
+                <i slot="prefix" class="el-icon-refresh-right" @click="randomTag"></i>
+              </el-input>
             </el-form-item>
             <el-form-item label="性别" :label-width="formLabelWidth" prop="sex">
               <el-select v-model="updateForm.sex" placeholder="性别">
@@ -128,6 +137,7 @@
             <el-form-item>
               <el-button type="primary" @click="updateUserData('updateForm')">提交</el-button>
               <el-button type="info" @click="updateCancel">取 消</el-button>
+              <el-button type="warning" @click="randomTag">点我生成车牌</el-button>
             </el-form-item>
           </el-form>
         </el-dialog>
@@ -205,15 +215,7 @@
         cb(new Error("请输入合法的手机号"));
 
       };
-      var checkTag= (rule, value, cb) => {
 
-        // 验证手机号的正则表达式
-        const regMobile = /^\d{6}$/;
-        if (regMobile.test(value)) {
-          cb();
-        }
-        cb(new Error("请输入车牌号 6位的纯数字"));
-      };
       var checkIdNumber = (rule, value, callback) => {
         if (!value) {
           callback(new Error("身份证号不能为空"));
@@ -280,8 +282,9 @@
           address:[
             {required: true, message: '请输入住址', trigger: 'blur'}
           ],
-          tag:[
-            {validator:checkTag,required: true, message: '车牌号需要为六位纯数字',trigger: 'blur'}
+          tag:[{
+            required: true,mesaage: '车牌号不能为空' ,trigger: 'blur'
+          }
           ]
         },
         formLabelWidth: '120px'
@@ -405,6 +408,12 @@
           }
         });
 
+      },
+      randomTag(){
+        var _this = this;
+        axios.get("/user/random").then(function (resp) {
+           _this.updateForm.tag = resp.data.data ;
+        })
       },
       HandlerCancel(){
         for(let i in this.form){

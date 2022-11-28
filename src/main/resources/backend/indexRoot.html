@@ -7,8 +7,8 @@
     <script src="dependency/js/axios.js"></script>
 <!--    <link rel="stylesheet" href="dependency/element-ui/lib/theme-chalk/index.css"></link>  -->
 <!--    <script src="dependency/element-ui/lib/index.js"></script>-->
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <link rel="stylesheet" href="./dependency/element-ui/lib/theme-chalk/index.css">
+    <script src="./dependency/element-ui/lib/index.js"></script>
 
 </head>
 <style>
@@ -55,6 +55,7 @@
                 </el-badge>
                 </el-menu-item>
                 <el-menu-item index="2"><a href="indexRoot.html" target="_self">用户管理</a></el-menu-item>
+                <el-menu-item v-bind="population">当前在线人数 : {{population}}</el-menu-item>
                 <el-menu-item index="4" >
                     <el-input
                             placeholder="请输入姓名"
@@ -201,15 +202,6 @@
                 cb(new Error("请输入合法的手机号"));
 
             };
-            var checkTag= (rule, value, cb) => {
-
-                // 验证手机号的正则表达式
-                const regMobile = /^\d{6}$/;
-                if (regMobile.test(value)) {
-                    cb();
-                }
-                cb(new Error("请输入车牌号 6位的纯数字"));
-            };
             var checkIdNumber = (rule, value, callback) => {
                 if (!value) {
                     callback(new Error("身份证号不能为空"));
@@ -239,6 +231,7 @@
                 tableData : [],
                 dialogFormVisible: false,
                 dialogUpdateVisible:false,
+                population:'',
                 updateForm:{
                     name: '',
                     address:'',
@@ -277,9 +270,6 @@
                     address:[
                         {required: true, message: '请输入住址', trigger: 'blur'}
                     ],
-                    tag:[
-                        {validator:checkTag,required: true, message: '车牌号需要为六位纯数字',trigger: 'blur'}
-                    ]
                 },
                 formLabelWidth: '120px'
             };
@@ -379,6 +369,9 @@
                 })
                 axios.get("/user/solution").then(function (resp) {
                     _this.solution = resp.data.data;
+                })
+                axios.get("/user/population").then(function (resp){
+                    _this.population = resp.data.data;
                 })
             },
             HandlerUserData(formName){

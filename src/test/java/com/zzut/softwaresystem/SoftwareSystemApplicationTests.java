@@ -1,6 +1,7 @@
-package com.example.softwaresystem;
+package com.zzut.softwaresystem;
 
-import com.example.softwaresystem.service.impl.UserServiceImpl;
+import com.zzut.softwaresystem.common.RandomTag;
+import com.zzut.softwaresystem.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +14,11 @@ class SoftwareSystemApplicationTests {
 private UserServiceImpl service;
     @Test
     void contextLoads() {
-        System.out.println(service.list());
+        for (int i = 0; i < 10; i++) {
+            String randomTag = RandomTag.getRandomTag();
+            System.out.println("车牌号" + randomTag);
+        }
+
     }
     @Test
     void test(){

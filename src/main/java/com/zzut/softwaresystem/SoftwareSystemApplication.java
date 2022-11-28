@@ -1,8 +1,7 @@
-package com.example.softwaresystem;
+package com.zzut.softwaresystem;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.ServletComponentScan;
 
 @SpringBootApplication
 

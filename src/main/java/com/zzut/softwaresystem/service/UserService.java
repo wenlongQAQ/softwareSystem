@@ -1,7 +1,7 @@
-package com.example.softwaresystem.service;
+package com.zzut.softwaresystem.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.softwaresystem.entity.User;
+import com.zzut.softwaresystem.entity.User;
 
 public interface UserService extends IService<User> {
 }

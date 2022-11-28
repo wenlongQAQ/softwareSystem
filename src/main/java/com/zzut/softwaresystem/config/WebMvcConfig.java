@@ -1,6 +1,6 @@
-package com.example.softwaresystem.config;
+package com.zzut.softwaresystem.config;
 
-import com.example.softwaresystem.filter.ProjectInterceptor;
+import com.zzut.softwaresystem.filter.ProjectFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurationSupport {
     @Autowired
-    private ProjectInterceptor projectInterceptor;
+    private ProjectFilter projectInterceptor;
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/backend/**").addResourceLocations("classpath:/backend/");

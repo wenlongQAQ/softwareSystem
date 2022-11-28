@@ -1,4 +1,4 @@
-package com.example.softwaresystem.result;
+package com.zzut.softwaresystem.result;
 
 import lombok.Data;
 

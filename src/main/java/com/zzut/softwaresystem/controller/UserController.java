@@ -1,14 +1,18 @@
-package com.example.softwaresystem.controller;
+package com.zzut.softwaresystem.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.example.softwaresystem.entity.User;
-import com.example.softwaresystem.result.R;
-import com.example.softwaresystem.service.UserService;
+import com.zzut.softwaresystem.common.RandomTag;
+import com.zzut.softwaresystem.entity.User;
+import com.zzut.softwaresystem.result.R;
+import com.zzut.softwaresystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSessionEvent;
 import java.util.List;
 
 @RestController
@@ -17,6 +21,7 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService service;
+    @Autowired
 
     /**
      * 根据名称查询用户
@@ -29,9 +34,12 @@ public class UserController {
         lambdaQueryWrapper.like(user.getName()!=null,User::getName,user.getName());
         lambdaQueryWrapper.like(user.getIdNumber()!=null,User::getIdNumber,user.getIdNumber());
         List<User> list = service.list(lambdaQueryWrapper);
-        if (list!=null)
-            return R.success(list,"查询成功");
-        else return R.error("出错了");
+        if (list!=null) {
+            return R.success(list, "查询成功");
+        }
+        else {
+            return R.error("出错了");
+        }
     }
 
     /**
@@ -97,8 +105,9 @@ public class UserController {
             request.getSession().setAttribute("user",one.getIdentity());
             return R.success(one,"登录成功");
         }
-        else
+        else {
             return R.error("登录失败");
+        }
     }
 
     /**
@@ -109,12 +118,15 @@ public class UserController {
      */
     @PostMapping("/save")
     public R<String> addUser(HttpServletRequest request,@RequestBody User user){
-        if (user.getUsername()==null)
+        if (user.getUsername()==null) {
             user.setUsername(user.getIdNumber().substring(12));
+        }
         boolean save = service.save(user);
         if (save) {
             return R.success("","新增成功!");
-        }else return R.error("操作失败!");
+        }else {
+            return R.error("操作失败!");
+        }
     }
 
     /**
@@ -131,7 +143,9 @@ public class UserController {
         boolean save = service.updateById(user);
         if (save) {
             return R.success("","提交成功!!!");
-        }else return R.error("操作失败!");
+        }else {
+            return R.error("操作失败!");
+        }
     }
 
     /**
@@ -194,5 +208,16 @@ public class UserController {
     public R<String > logonout(HttpServletRequest request){
         request.getSession().invalidate();
         return R.success("","退出成功");
+    }
+    @GetMapping("/population")
+    public R<Integer> population(HttpServletRequest servletRequest){
+        Integer count = (Integer) servletRequest.getSession().getServletContext().getAttribute("userNumber");
+        System.out.println(count);
+        return R.success(count,"");
+    }
+    @GetMapping("/random")
+    public R<String> getRandomTag(){
+        String randomTag = RandomTag.getRandomTag();
+        return R.success(randomTag,"");
     }
 }

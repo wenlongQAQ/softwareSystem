@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="dependency/js/vue2.js"></script>
-
     <script src="dependency/js/axios.js"></script>
 <!--    <script src="dependency/element-ui/lib/index.js"></script>-->
-<!--    <link rel="stylesheet" href="dependency/element-ui/lib/theme-chalk/index.css"></link>-->
+<!--    <link rel="stylesheet" hrwef="dependency/element-ui/lib/theme-chalk/index.css"></link>-->
 
+    <!-- 引入样式 -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 </head>
 <style>
@@ -18,6 +19,7 @@
         text-align: center;
         line-height: 30px;
     }
+
 
 
     .el-main {
@@ -57,13 +59,6 @@
                 <el-menu-item @click="showDialogFormVisible" >申领车牌</el-menu-item>
                 <el-menu-item><i class="el-icon-switch-button" @click="logonOut"></i></el-menu-item>
 
-<!--                <el-menu-item index="4" >-->
-<!--                    <el-input-->
-<!--                            placeholder="请输入姓名"-->
-<!--                            v-model="searchForm.name">-->
-<!--                        <i slot="prefix" class="el-input__icon el-icon-search" @click="searchUser"></i>-->
-<!--                    </el-input>-->
-<!--                </el-menu-item>-->
             </el-menu>
         </el-header>
         <el-container>
@@ -135,7 +130,7 @@
                 <template>
                     <el-descriptions  :data="tableData" class="margin-top" title="个人信息" :column="3" :size="size" border>
                         <template slot="extra">
-                            <el-button type="primary" size="small" @click="handleEdit()">修改</el-button>
+                            <el-button type="primary" size="small" @click="handleEdit">修改</el-button>
                         </template>
                         <el-descriptions-item>
                             <template slot="label">
@@ -348,23 +343,8 @@
             handleSelect(key, keyPath) {
                 console.log(key, keyPath);
             },
-            // searchUser() {
-            //     console.log(this.searchForm.name);
-            //     var _this  =this;
-            //     axios.get("/user/search?name="+this.searchForm.name).then(function (resp) {
-            //         if(resp.data.code===1){
-            //             _this.$message.success(resp.data.msg);
-            //             _this.tableData = resp.data.data;
-            //         }else {
-            //             _this.$message.error(resp.data.msg);
-            //         }
-            //
-            //
-            //     })
-            // },
+
             showDialogFormVisible(){
-
-
                 if(this.form.name===""||this.form.address===""||this.form.idNumber===""){
                     this.$message.error("请补全你的个人信息,身份证,姓名,和住址后再尝试");
                 }else {
@@ -424,7 +404,7 @@
                         }
                         this.dialogUpdateVisible=false;
                     } else {
-                        this.$message.error("你以为乱输我就让你交?");
+                        this.$message.error("请补全你的个人信息,身份证,姓名,和住址后再尝试?");
                         return false;
                     }
                 });
@@ -458,7 +438,7 @@
                         }
                         this.dialogFormVisible=false;
                     } else {
-                        this.$message.error("你以为乱输我就让你交?")
+                        this.$message.error("请补全你的个人信息,身份证,姓名,和住址后再尝试?")
                         return false;
                     }
                 });
